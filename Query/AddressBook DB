@@ -1,0 +1,141 @@
+use AddressBook
+
+-- Create Table: Country
+CREATE TABLE Country
+(
+    CountryID INT PRIMARY KEY IDENTITY(1,1),
+    CountryName NVARCHAR(100) NOT NULL,
+    CountryCode NVARCHAR(10) NOT NULL,
+    Created DATETIME DEFAULT GETDATE(),
+    Modified DATETIME DEFAULT GETDATE()
+);
+
+-- Create Table: State
+CREATE TABLE State
+(
+    StateID INT PRIMARY KEY IDENTITY(1,1),
+    StateName NVARCHAR(100) NOT NULL,
+    StateCode NVARCHAR(10) NOT NULL,
+    CountryID INT,
+    Created DATETIME DEFAULT GETDATE(),
+    Modified DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (CountryID) REFERENCES Country(CountryID)
+);
+
+-- Create Table: City
+CREATE TABLE City
+(
+    CityID INT PRIMARY KEY IDENTITY(1,1),
+    CityName NVARCHAR(100) NOT NULL,
+    CityCode NVARCHAR(10) NOT NULL,
+    StateID INT,
+    CountryID INT,
+    Created DATETIME DEFAULT GETDATE(),
+    Modified DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (StateID) REFERENCES State(StateID),
+    FOREIGN KEY (CountryID) REFERENCES Country(CountryID)
+);
+
+-- Create Table: ContactCategory
+CREATE TABLE ContactCategory
+(
+    ContactCategoryID INT PRIMARY KEY IDENTITY(1,1),
+    ContactCategoryName NVARCHAR(100) NOT NULL
+);
+
+-- Create Table: Contact
+CREATE TABLE Contact
+(
+    ContactID INT PRIMARY KEY IDENTITY(1,1),
+    ContactCategoryID INT,
+    CityID INT,
+    StateID INT,
+    CountryID INT,
+    ContactName NVARCHAR(100) NOT NULL,
+    Address NVARCHAR(255),
+    Mobile NVARCHAR(15),
+    Email NVARCHAR(100),
+    BirthDate DATE,
+    Created DATETIME DEFAULT GETDATE(),
+    Modified DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ContactCategoryID) REFERENCES ContactCategory(ContactCategoryID),
+    FOREIGN KEY (CityID) REFERENCES City(CityID) ,
+    FOREIGN KEY (StateID) REFERENCES State(StateID) ,
+    FOREIGN KEY (CountryID) REFERENCES Country(CountryID)
+);
+
+-- Insert Realistic Records
+-- Country records
+INSERT INTO Country
+    (CountryName, CountryCode)
+VALUES
+    ('United States', 'US'),
+    ('Canada', 'CA'),
+    ('India', 'IN'),
+    ('United Kingdom', 'UK'),
+    ('Australia', 'AU'),
+    ('Germany', 'DE'),
+    ('France', 'FR'),
+    ('Japan', 'JP'),
+    ('China', 'CN'),
+    ('Brazil', 'BR');
+
+-- State records
+INSERT INTO State
+    (StateName, StateCode, CountryID)
+VALUES
+    ('California', 'CA', 1),
+    ('Texas', 'TX', 1),
+    ('Ontario', 'ON', 2),
+    ('Quebec', 'QC', 2),
+    ('Maharashtra', 'MH', 3),
+    ('Gujarat', 'GJ', 3),
+    ('New South Wales', 'NSW', 5),
+    ('Bavaria', 'BY', 6),
+    ('Île-de-France', 'IDF', 7),
+    ('São Paulo', 'SP', 10);
+
+-- City records
+INSERT INTO City
+    (CityName, CityCode, StateID, CountryID)
+VALUES
+    ('Los Angeles', 'LA', 1, 1),
+    ('Houston', 'HOU', 2, 1),
+    ('Toronto', 'TOR', 3, 2),
+    ('Montreal', 'MTL', 4, 2),
+    ('Mumbai', 'BOM', 5, 3),
+    ('Ahmedabad', 'AMD', 6, 3),
+    ('Sydney', 'SYD', 7, 5),
+    ('Munich', 'MUC', 8, 6),
+    ('Paris', 'PAR', 9, 7),
+    ('Sao Paulo', 'SP', 10, 10);
+
+-- Contact Category records
+INSERT INTO ContactCategory
+    (ContactCategoryName)
+VALUES
+    ('Family'),
+    ('Friends'),
+    ('Work'),
+    ('Emergency'),
+    ('Doctors'),
+    ('Vendors'),
+    ('Colleagues'),
+    ('Customers'),
+    ('Suppliers'),
+    ('Others');
+
+-- Contact records
+INSERT INTO Contact
+    (ContactCategoryID, CityID, StateID, CountryID, ContactName, Address, Mobile, Email, BirthDate)
+VALUES
+    (1, 1, 1, 1, 'John Doe', '123 Sunset Blvd, Los Angeles', '123-456-7890', 'johndoe@example.com', '1990-01-15'),
+    (2, 2, 2, 1, 'Jane Smith', '456 Main St, Houston', '234-567-8901', 'janesmith@example.com', '1985-06-22'),
+    (3, 3, 3, 2, 'Richard Roe', '789 Maple Ave, Toronto', '345-678-9012', 'richardroe@example.ca', '1978-09-11'),
+    (4, 5, 5, 3, 'Priya Desai', 'Plot 10, Mumbai', '456-789-0123', 'priya.desai@example.in', '1992-03-14'),
+    (5, 6, 6, 3, 'Amit Patel', 'House No. 56, Ahmedabad', '567-890-1234', 'amit.patel@example.in', '1989-12-25'),
+    (6, 7, 7, 5, 'Emily Wilson', '12 High St, Sydney', '678-901-2345', 'emilyw@example.com.au', '1994-07-08'),
+    (7, 8, 8, 6, 'Sebastian Meier', '56 Karlstrasse, Munich', '789-012-3456', 's.meier@example.de', '1982-11-30'),
+    (8, 9, 9, 7, 'Jean Dupont', '33 Rue de Rivoli, Paris', '890-123-4567', 'jean.dupont@example.fr', '1975-05-05'),
+    (9, 10, 10, 10, 'Lucas Silva', 'Rua 89, Sao Paulo', '901-234-5678', 'lucas.silva@example.br', '1988-04-12'),
+    (10, 4, 4, 2, 'Alice Johnson', '34 St. Laurent Blvd, Montreal', '012-345-6789', 'alice.j@example.com', '1995-10-18');
